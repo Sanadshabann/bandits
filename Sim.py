@@ -108,11 +108,38 @@ def sim_ucb(trials, horizon, deltas):
     for k, delta in enumerate(deltas):
         regrets = np.zeros(trials)
         for i in range(trials):
-            bandit = GaussianBandit([0, -0.1, -0.15])
+            bandit = GaussianBandit([0, -0.1])
             regret = ucb(delta, bandit, horizon)
             regrets[i] = regret
         mean_regrets[k] = np.mean(regrets)
     return mean_regrets
+
+
+def ucb_(delta, bandit, n):
+    k = bandit.k  # number of arms
+    upper_bounds = float('inf') * np.ones(k)  # set upper bounds to infinity
+    means = np.zeros((k, 2))  # to store means and T_i
+    for i in range(n):
+        arm = np.argmax(upper_bounds)
+        reward = bandit.pull(arm)
+        means[arm, 0] = (means[arm, 0] * means[arm, 1] + reward) / (means[arm, 1] + 1)
+        means[arm, 1] += 1
+        upper_bounds[arm] = means[arm, 0] + np.sqrt(delta / means[arm, 1])
+    return bandit.regret
+
+
+def sim_ucb_std(trials, horizon, deltas):
+    mean_regrets = np.zeros(len(deltas))
+    std_regrets = np.zeros(len(deltas))
+    for k, delta in enumerate(deltas):
+        regrets = np.zeros(trials)
+        for i in range(trials):
+            bandit = GaussianBandit([0, -0.1])
+            regret = ucb_(delta, bandit, horizon)
+            regrets[i] = regret
+        mean_regrets[k] = np.mean(regrets)
+        std_regrets[k] = np.std(regrets)
+    return mean_regrets, std_regrets
 
 
 def sim_ucbii(trials, horizon, alphas):
@@ -162,3 +189,18 @@ def sim_ucb_Delta(trials, horizon, Deltas, delta):  # for different suboptimalit
             regrets[i] = regret
         mean_regrets[k] = np.mean(regrets)
     return mean_regrets
+
+
+def sim_ucb_Delta_(trials, horizon, Deltas, delta):  # for different suboptimality gaps (Q8)
+    mean_regrets = np.zeros(len(Deltas))
+    stds = np.zeros(len(Deltas))
+    for k, Delta in enumerate(Deltas):
+        regrets = np.zeros(trials)
+        for i in range(trials):
+            bandit = GaussianBandit([0, -Delta])
+            regret = ucb(delta, bandit, horizon)
+            regrets[i] = regret
+        mean_regrets[k] = np.mean(regrets)
+        stds[k] = np.std(regrets)
+    return mean_regrets, stds
+
