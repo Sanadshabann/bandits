@@ -22,4 +22,4 @@ class LinContextGauss:
 
     def pull(self, a, cov):
         self.regret += np.max(np.dot(self.coeff, cov)) - np.dot(self.coeff[a], cov)
-        return random.gauss(np.dot(self.coeff[a], cov)[0], 1)
+        return random.gauss(np.dot(self.coeff[a], cov), 1)
