@@ -58,4 +58,4 @@ def case2(n_trials, n_cores, d, D):
 
 
 if __name__ == '__main__':
-    case2(30, 10, 2, 3)
+    case2(10, 6, 2, 3)
