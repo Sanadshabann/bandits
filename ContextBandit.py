@@ -2,7 +2,6 @@ import numpy as np
 import random
 
 
-
 class ContextBandit:
     def __init__(self, lambdas, noise):  # lambdas is a list of functions that take context vector x and return a reward
         self.k = len(lambdas)
