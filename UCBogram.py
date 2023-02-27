@@ -1,6 +1,8 @@
 import math
 import numpy as np
 
+from ContextBandit import ContextBandit
+
 
 def bin_index(x, m, lo=0, hi=1):
     bin_i = []
@@ -30,6 +32,8 @@ def ucbogram(bandit, Z, m, lo=0, hi=1, h=lambda x: x):
     regrets = []
     n_arms = bandit.k
     for t in range(n):
+        if (t % 10000 == 0):
+            print(t)
         cube = bin_index(X[t], m, lo, hi)
         indices = np.zeros(n_arms)
         for a in range(n_arms):
@@ -42,3 +46,17 @@ def ucbogram(bandit, Z, m, lo=0, hi=1, h=lambda x: x):
         dic[cube][(action, 1)] += reward
         regrets.append(bandit.regret)
     return regrets
+
+
+if __name__ == "__main__":
+    n = 100000
+    Z = np.random.uniform(0, 1, size=(n, 2))
+    h = lambda z: [z[0], z[1], np.prod(z), math.sin(sum(z) * math.pi)]
+    lambdas = [lambda x: np.random.normal(0, 0.3),
+               lambda x: np.prod([math.sin(4 * xs * math.pi) for xs in x])]
+    noise = lambda x: np.random.normal(0, 0.2)
+    all_regrets = []
+    for i in range(10):
+        bandit = ContextBandit(lambdas, noise)
+        all_regrets.append( ucbogram(bandit, Z, m=25, lo=-1, h=h))
+    np.savetxt("data_D/regrets_ucbg.csv", np.asarray(all_regrets), delimiter=",")

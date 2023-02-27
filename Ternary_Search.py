@@ -2,8 +2,7 @@ import numpy
 import math as m
 
 
-
-def uncertainty(k, actions, rewards, distances, theta, phi, a):
+def uncertainty(k, actions, distances, theta, phi, a):
     t = len(actions)
     k_least = numpy.argpartition(distances, k - 1)[:k]
     N = sum(numpy.array(actions)[k_least] == a)
@@ -11,17 +10,17 @@ def uncertainty(k, actions, rewards, distances, theta, phi, a):
     return uncer
 
 
-def k_ternary_search(actions, rewards, distances, theta, phi, a):
-    f = lambda k: uncertainty(k, actions, rewards, distances, theta, phi, a)
-    t = len(actions) - 1
-    l = 1
-    r = t
+def k_ternary_search(actions, distances, theta, phi, a):
+    f = lambda k: uncertainty(k, actions, distances, theta, phi, a)
+    l = 0
+    r = min(len(actions) - 1, 200)
     while True:
         c1 = l + m.floor((r - l) / 3)
         c2 = l + 2 * m.floor((r - l) / 3)
-        if f(c1) > f(c2):
+        diff = f(c1) - f(c2)
+        if diff > 0:
             l = c1
-        elif f(c1) < f(c2):
+        elif diff < 0:
             r = c2
         else:
             if c1 == c2:
