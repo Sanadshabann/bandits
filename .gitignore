@@ -128,5 +128,10 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# data
+# data / generated output
 *.csv
+results/
+
+# IDE
+.idea/
+*.pdf
