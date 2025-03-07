@@ -1,0 +1,1 @@
+This repository contains implementation of some bandit algorithms, as well as some simulation setup. Two contextual bandit algorithms are implemented: 1) K-Nearest-Neighbor UCB (Reeve et. al) 2) UCBogram (Rigollet and Zeevi (2010))
